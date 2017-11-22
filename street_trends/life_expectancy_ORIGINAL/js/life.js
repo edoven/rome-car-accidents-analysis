@@ -11,50 +11,39 @@ var regions = {
     h = 550,
     margin = 30,
     startYear = 1960,
-    endYear = 2010,
+    endYear = 2009,
     startAge = 20,
     endAge = 80,
     y = d3.scaleLinear().domain([endAge, startAge]).range([0 + margin, h - margin]),
-    x = d3.scaleLinear().domain([1960, 2009]).range([0 + margin - 5, w]),
-    years = d3.range(startYear, endYear);
-var vis = d3.select("#vis").append("svg:svg").attr("width", w).attr("height", h).append("svg:g")
-var line = d3.line().x(function(d, i) {
-    return x(d.x);
-}).y(function(d) {
-    return y(d.y);
-});
-var countries_regions = {};
+    x = d3.scaleLinear().domain([startYear, endYear-1]).range([0 + margin - 5, w]),
+    years = d3.range(startYear, endYear+1);
+var vis = d3.select("#vis")
+            .append("svg:svg")
+            .attr("width", w)
+            .attr("height", h)
+            .append("svg:g")
+var line = d3.line()
+             .x(function(d, i) { return x(d.x); })
+             .y(function(d) { return y(d.y); });
+var countries_regions = {},
+    startEnd = {},
+    countryCodes = {};
 
 
-//ORIGINAL
+
 d3.text('data/country-regions.csv', 
         function(error, data) {
             if (error) throw error;
             var regions = d3.csvParseRows(data);
             for (i = 1; i < regions.length; i++) {
-                countries_regions[regions[i][0]] = regions[i][1];
+                countryCode = regions[i][0]
+                regionCode = regions[i][1]
+                countries_regions[countryCode] = regionCode;
             }
             }
         );
 
-// d3.csv("data/country-regions.csv", function(error, data) {
-//     if (error) throw error;
-//     //console.log(data); // [{"Hello": "world"}, …]
-//     //var regions = d3.csv.parseRows(text);
-    
-//     var regions = data;
-//     for (i = 1; i < regions.length; i++) {
-//         countries_regions[regions[i].CountryCode] = regions[i].RegionCode;
-//         //console.log(regions[i])
-//     }
-//     console.log(countries_regions)
-// });
 
-
-
-
-var startEnd = {},
-    countryCodes = {};
 
 d3.text('data/life-expectancy-cleaned-all.csv', function(error, data) {
     if (error) throw error;
@@ -62,7 +51,10 @@ d3.text('data/life-expectancy-cleaned-all.csv', function(error, data) {
     for (i = 1; i < countries.length; i++) {
         var values = countries[i].slice(2, countries[i.length - 1]);
         var currData = [];
-        countryCodes[countries[i][1]] = countries[i][0];
+        //CountryName CountryCode
+        countryCode = countries[i][1]
+        cointryName = countries[i][0]
+        countryCodes[countryCode] = cointryName;
         var started = false;
         for (j = 0; j < values.length; j++) {
             if (values[j] != '') {
@@ -82,29 +74,71 @@ d3.text('data/life-expectancy-cleaned-all.csv', function(error, data) {
                 }
             }
         }
-        vis.append("svg:path").data([currData]).attr("country", countries[i][1]).attr("class", countries_regions[countries[i][1]]).attr("d", line).on("mouseover", onmouseover).on("mouseout", onmouseout);
+        vis.append("svg:path")
+           .data([currData])
+           .attr("country", countryCode)
+           .attr("class", countries_regions[countryCode])
+           .attr("d", line)
+           .on("mouseover", onmouseover)
+           .on("mouseout", onmouseout);
     }
 });
 
 
-vis.append("svg:line").attr("x1", x(1960)).attr("y1", y(startAge)).attr("x2", x(2009)).attr("y2", y(startAge)).attr("class", "axis")
-vis.append("svg:line").attr("x1", x(startYear)).attr("y1", y(startAge)).attr("x2", x(startYear)).attr("y2", y(endAge)).attr("class", "axis")
-vis.selectAll(".xLabel").data(x.ticks(5)).enter().append("svg:text").attr("class", "xLabel").text(String).attr("x", function(d) {
-    return x(d)
-}).attr("y", h - 10).attr("text-anchor", "middle")
-vis.selectAll(".yLabel").data(y.ticks(4)).enter().append("svg:text").attr("class", "yLabel").text(String).attr("x", 0).attr("y", function(d) {
-    return y(d)
-}).attr("text-anchor", "right").attr("dy", 3)
-vis.selectAll(".xTicks").data(x.ticks(5)).enter().append("svg:line").attr("class", "xTicks").attr("x1", function(d) {
-    return x(d);
-}).attr("y1", y(startAge)).attr("x2", function(d) {
-    return x(d);
-}).attr("y2", y(startAge) + 7)
-vis.selectAll(".yTicks").data(y.ticks(4)).enter().append("svg:line").attr("class", "yTicks").attr("y1", function(d) {
-    return y(d);
-}).attr("x1", x(1959.5)).attr("y2", function(d) {
-    return y(d);
-}).attr("x2", x(1960))
+vis.append("svg:line")
+   .attr("x1", x(1960))
+   .attr("y1", y(startAge))
+   .attr("x2", x(2009))
+   .attr("y2", y(startAge))
+   .attr("class", "axis")
+
+vis.append("svg:line")
+   .attr("x1", x(startYear))
+   .attr("y1", y(startAge))
+   .attr("x2", x(startYear))
+   .attr("y2", y(endAge))
+   .attr("class", "axis")
+
+vis.selectAll(".xLabel")
+   .data(x.ticks(5))
+   .enter()
+   .append("svg:text")
+   .attr("class", "xLabel")
+   .text(String)
+   .attr("x", function(d) { return x(d) })
+   .attr("y", h - 10)
+   .attr("text-anchor", "middle")
+
+vis.selectAll(".yLabel")
+   .data(y.ticks(4))
+   .enter()
+   .append("svg:text")
+   .attr("class", "yLabel")
+   .text(String)
+   .attr("x", 0)
+   .attr("y", function(d) { return y(d) })
+   .attr("text-anchor", "right")
+   .attr("dy", 3)
+
+
+vis.selectAll(".xTicks")
+   .data(x.ticks(5))
+   .enter()
+   .append("svg:line")
+   .attr("class", "xTicks")
+   .attr("x1", function(d) { return x(d); })
+   .attr("y1", y(startAge)).attr("x2", function(d) { return x(d); })
+   .attr("y2", y(startAge) + 7)
+
+vis.selectAll(".yTicks")
+   .data(y.ticks(4))
+   .enter()
+   .append("svg:line")
+   .attr("class", "yTicks")
+   .attr("y1", function(d) { return y(d); })
+   .attr("x1", x(1959.5))
+   .attr("y2", function(d) { return y(d); })
+   .attr("x2", x(1960))
 
 function onclick(d, i) {
     var currClass = d3.select(this).attr("class");
@@ -141,11 +175,11 @@ function onmouseout(d, i) {
     $("#blurb-content").html('');
 }
 
-function showRegion(regionCode) {
-    var countries = d3.selectAll("path." + regionCode);
-    if (countries.classed('highlight')) {
-        countries.attr("class", regionCode);
-    } else {
-        countries.classed('highlight', true);
-    }
-}
+// function showRegion(regionCode) {
+//     var countries = d3.selectAll("path." + regionCode);
+//     if (countries.classed('highlight')) {
+//         countries.attr("class", regionCode);
+//     } else {
+//         countries.classed('highlight', true);
+//     }
+// }

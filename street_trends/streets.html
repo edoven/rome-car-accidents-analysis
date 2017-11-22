@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+
+<html>
+<head>
+	<meta charset="utf-8"/>
+<title>Car accidents in Rome</title>
+<link rel="stylesheet" type="text/css" href="css/life.css" />
+<!-- <script type="text/javascript" src="http://media.flowingdata.com/js/jquery-1.4.4.min.js"></script> -->
+<script
+	  src="http://code.jquery.com/jquery-3.2.1.min.js"
+	  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+	  crossorigin="anonymous">
+</script>
+<!--
+<script type="text/javascript" src="http://media.flowingdata.com/js/d3.js?1.29.1"></script>
+<script type="text/javascript" src="http://media.flowingdata.com/js/d3.time.js?1.29.1"></script>
+<script type="text/javascript" src="http://media.flowingdata.com/js/d3.csv.js?1.29.1"></script>
+-->
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<link href='http://fonts.googleapis.com/css?family=Bevan|Cardo' rel='stylesheet' type='text/css'>
+</head>
+<body>
+<div id="main-wrapper">
+<div id="content">
+<div style="text-align:right"><a href="http://flowingdata.com"><img src="./logo-lone-square.gif" title="FlowingData" width="50" height="50"></a></div>
+<h1>Car Accidents in Rome</h1>
+<p>Lorem ipsum bla bla. <a href="http://flowingdata.com/2011/10/13/life-expectancy-changes/">Read more...</a></p>
+<!--
+<div id="filters">
+<a id="EAS">East Asia and Pacific</a>
+<a id="SAS">South Asia</a>
+<a id="ECS">Europe and Central Asia</a>
+<a id="MEA">Middle East and North Africa</a>
+<a id="SSF">Sub-Saharan Africa</a>
+<a id="LCN">Latin America and Caribbean</a>
+<a id="NAC">North America</a>
+</div>
+-->
+<div id="blurb">
+<div id="default-blurb">
+<h2>Total Accidents</h2>
+<p>89 car accidents registered between jan 2014 and may 2014.</p>
+</div>
+<div id="blurb-content"></div>
+</div>
+<div id="vis"></div>
+</div>
+</div>
+<script type="text/javascript" src="js/life.js"></script>
+<!-- <script type="text/javascript">
+$(document).ready(function() {
+    $('#filters a').click(function() {
+        var countryId = $(this).attr("id");
+        $(this).toggleClass(countryId);
+        showRegion(countryId);
+    });  
+});
+</script> -->
+</body>
+</html>
